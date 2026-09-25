@@ -24,11 +24,8 @@ alter table public.charger_transactions
 alter table public.app_users enable row level security;
 alter table public.it_team_members enable row level security;
 
-drop policy if exists "Allow app user reads" on public.app_users;
-create policy "Allow app user reads" on public.app_users for select using (true);
-
 drop policy if exists "Allow app user inserts" on public.app_users;
-create policy "Allow app user inserts" on public.app_users for insert with check (true);
+create policy "Allow app user inserts" on public.app_users for insert with check (false);
 
 drop policy if exists "Allow team member reads" on public.it_team_members;
 create policy "Allow team member reads" on public.it_team_members for select using (true);
@@ -52,17 +49,17 @@ as $$
     limit 1;
 $$;
 
-create or replace function public.create_app_user(
+drop function if exists public.create_app_user(text, text);
+
+create function public.create_app_user(
     p_username text,
     p_password text
 )
-returns public.app_users
+returns void
 language plpgsql
 security definer
 set search_path = public
 as $$
-declare
-    created_user public.app_users;
 begin
     if length(trim(p_username)) = 0 or length(p_password) = 0 then
         raise exception 'Username and password are required.';
@@ -70,9 +67,6 @@ begin
 
     insert into public.app_users (username, password_hash, role)
     values (trim(p_username), crypt(p_password, gen_salt('bf')), 'user')
-    returning * into created_user;
-
-    return created_user;
 exception
     when unique_violation then
         raise exception 'That username already exists.';
