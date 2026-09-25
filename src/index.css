@@ -454,9 +454,13 @@ a {
     line-height: 1.55;
 }
 
-.install-button {
+.install-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
     min-height: 50px;
+    padding: 12px;
     border: none;
     border-radius: 10px;
     background: var(--primary);
@@ -465,15 +469,17 @@ a {
     font-weight: 800;
     letter-spacing: 0.5px;
     cursor: pointer;
+    text-decoration: none;
 }
 
-.install-button:hover:not(:disabled) {
+.install-link:hover {
     background: var(--primary-dark);
 }
 
-.install-button:disabled {
+.install-link.is-installing {
     opacity: 0.65;
     cursor: wait;
+    pointer-events: none;
 }
 
 .install-instructions {

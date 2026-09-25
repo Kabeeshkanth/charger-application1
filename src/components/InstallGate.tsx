@@ -82,19 +82,22 @@ export default function InstallGate({ children }: InstallGateProps) {
           experience.
         </p>
 
-        {installPrompt ? (
-          <button
-            className="install-button"
-            type="button"
-            onClick={handleInstall}
-            disabled={installing}
-          >
-            {installing ? 'INSTALLING...' : 'INSTALL APP'}
-          </button>
-        ) : (
+        <a
+          className={`install-link${installing ? ' is-installing' : ''}`}
+          href="#install"
+          onClick={(event) => {
+            event.preventDefault();
+            void handleInstall();
+          }}
+          aria-disabled={installing}
+        >
+          {installing ? 'INSTALLING...' : 'CLICK HERE TO DOWNLOAD AND INSTALL'}
+        </a>
+
+        {!installPrompt && (
           <p className="install-instructions">
-            Use your browser&apos;s install option: open the browser menu and
-            choose <strong>Install app</strong> or <strong>Add to Home Screen</strong>.
+            If no install window opens, use your browser&apos;s menu and choose
+            <strong> Install app</strong> or <strong>Add to Home Screen</strong>.
           </p>
         )}
       </div>
