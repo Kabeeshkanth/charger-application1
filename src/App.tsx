@@ -162,6 +162,7 @@ function App() {
   if (screen === 'borrow') {
     return (
         <BorrowCharger
+            user={user}
             onBack={() => setScreen('dashboard')}
         />
     );

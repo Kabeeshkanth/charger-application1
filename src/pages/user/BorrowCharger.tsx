@@ -6,19 +6,21 @@ import { borrowCharger } from '../../services/transactionService';
 import type { Charger } from '../../types/charger';
 import { FeedbackMessage } from '../../components/FeedbackMessage';
 import { getLocalDateTime } from '../../lib/dateTime';
+import type { AppUser } from '../../types/auth';
 
 interface BorrowChargerProps {
   onBack: () => void;
+  user: AppUser;
 }
 
 export default function BorrowCharger({
                                         onBack,
+                                        user,
                                       }: BorrowChargerProps) {
   const [chargers, setChargers] = useState<Charger[]>([]);
   const [chargerId, setChargerId] = useState('');
   const [borrowedDate, setBorrowedDate] = useState('');
   const [borrowedTime, setBorrowedTime] = useState('');
-  const [borrowedPerson, setBorrowedPerson] = useState('');
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -62,11 +64,6 @@ export default function BorrowCharger({
       return;
     }
 
-    if (!borrowedPerson.trim()) {
-      setMessage({ type: 'error', text: 'Please enter your name.' });
-      return;
-    }
-
     try {
       setSaving(true);
 
@@ -74,7 +71,7 @@ export default function BorrowCharger({
           Number(chargerId),
           borrowedDate,
           borrowedTime,
-          borrowedPerson
+          user.username
       );
 
       setMessage({ type: 'success', text: 'Charger borrowed successfully.' });
@@ -253,20 +250,16 @@ export default function BorrowCharger({
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="borrowedPerson">
-                      Employee Name
-                    </label>
-
+                    <label htmlFor="borrowedPerson">Borrowed By</label>
                     <input
                         id="borrowedPerson"
                         type="text"
-                        placeholder="Enter your name"
-                        value={borrowedPerson}
-                        onChange={(e) =>
-                            setBorrowedPerson(e.target.value)
-                        }
-                        required
+                        value={user.username}
+                        readOnly
                     />
+                    <small className="field-help">
+                      This is filled automatically from your logged-in account.
+                    </small>
                   </div>
 
                   <div className="form-notice">
