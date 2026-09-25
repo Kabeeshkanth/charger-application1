@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import Login from './pages/Login';
 import InstallGate from './components/InstallGate';
@@ -28,9 +28,48 @@ type Screen =
     | 'damaged'
     | 'reports';
 
+const STORED_USER_KEY = 'charger-manager-user';
+
+function getStoredUser(): AppUser | null {
+  const storedUser = localStorage.getItem(STORED_USER_KEY);
+
+  if (!storedUser) {
+    return null;
+  }
+
+  try {
+    const parsedUser: unknown = JSON.parse(storedUser);
+
+    if (
+      typeof parsedUser === 'object' &&
+      parsedUser !== null &&
+      'user_id' in parsedUser &&
+      'username' in parsedUser &&
+      'role' in parsedUser &&
+      typeof parsedUser.user_id === 'number' &&
+      typeof parsedUser.username === 'string' &&
+      (parsedUser.role === 'admin' || parsedUser.role === 'user')
+    ) {
+      return parsedUser as AppUser;
+    }
+  } catch {
+    localStorage.removeItem(STORED_USER_KEY);
+  }
+
+  return null;
+}
+
 function App() {
-  const [user, setUser] = useState<AppUser | null>(null);
+  const [user, setUser] = useState<AppUser | null>(getStoredUser);
   const [screen, setScreen] = useState<Screen>('dashboard');
+
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem(STORED_USER_KEY, JSON.stringify(user));
+    } else {
+      localStorage.removeItem(STORED_USER_KEY);
+    }
+  }, [user]);
 
   const handleLogout = () => {
     setUser(null);
