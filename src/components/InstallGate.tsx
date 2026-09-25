@@ -23,11 +23,18 @@ function isRunningAsInstalledApp() {
   );
 }
 
+function isAppleMobileDevice() {
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+}
+
 export default function InstallGate({ children }: InstallGateProps) {
   const [installed, setInstalled] = useState(isRunningAsInstalledApp);
   const [continueOnWeb, setContinueOnWeb] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installing, setInstalling] = useState(false);
+  const [showInstallInstructions, setShowInstallInstructions] = useState(false);
+  const [isAppleDevice] = useState(isAppleMobileDevice);
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (event: BeforeInstallPromptEvent) => {
@@ -51,6 +58,7 @@ export default function InstallGate({ children }: InstallGateProps) {
 
   const handleInstall = async () => {
     if (!installPrompt) {
+      setShowInstallInstructions(true);
       return;
     }
 
@@ -103,10 +111,20 @@ export default function InstallGate({ children }: InstallGateProps) {
           CONTINUE WITH WEB
         </button>
 
-        {!installPrompt && (
+        {(!installPrompt || showInstallInstructions) && (
           <p className="install-instructions">
-            If no install window opens, use your browser&apos;s menu and choose
-            <strong> Install app</strong> or <strong>Add to Home Screen</strong>.
+            {isAppleDevice ? (
+              <>
+                On your iPhone or iPad, tap the <strong>Share</strong> button,
+                choose <strong>Add to Home Screen</strong>, then tap
+                <strong> Add</strong>.
+              </>
+            ) : (
+              <>
+                Use your browser&apos;s menu and choose
+                <strong> Install app</strong> or <strong>Add to Home Screen</strong>.
+              </>
+            )}
           </p>
         )}
       </div>
