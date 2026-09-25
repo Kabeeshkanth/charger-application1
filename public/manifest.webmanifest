@@ -11,9 +11,9 @@
   "lang": "en",
   "icons": [
     {
-      "src": "/icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
+      "src": "/mobile-charger%20logo.jpg",
+      "sizes": "1200x1200",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]

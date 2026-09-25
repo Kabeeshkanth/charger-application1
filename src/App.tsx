@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import Login from './pages/Login';
+import InstallGate from './components/InstallGate';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AddCharger from './pages/admin/AddCharger';
@@ -38,12 +39,14 @@ function App() {
 
   if (!user) {
     return (
-        <Login
-            onLogin={(loggedUser) => {
-              setUser(loggedUser);
-              setScreen('dashboard');
-            }}
-        />
+        <InstallGate>
+          <Login
+              onLogin={(loggedUser) => {
+                setUser(loggedUser);
+                setScreen('dashboard');
+              }}
+          />
+        </InstallGate>
     );
   }
 

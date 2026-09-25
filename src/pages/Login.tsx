@@ -39,7 +39,11 @@ export default function Login({ onLogin }: LoginProps) {
         <div className="login-card">
 
           <div className="login-header">
-            <div className="login-logo" aria-hidden="true">M</div>
+            <img
+                className="login-logo"
+                src="/mobile-charger%20logo.jpg"
+                alt="Mobile charger"
+            />
             <h1>MELWIRE LANKA (PVT) LTD</h1>
             <p>CHARGER MANAGEMENT SYSTEM</p>
           </div>

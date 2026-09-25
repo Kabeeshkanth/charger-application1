@@ -1,9 +1,9 @@
-const CACHE_NAME = 'melwire-charger-shell-v1';
+const CACHE_NAME = 'melwire-charger-shell-v2';
 const APP_SHELL = [
   '/',
   '/index.html',
   '/manifest.webmanifest',
-  '/icon.svg'
+  '/mobile-charger%20logo.jpg'
 ];
 
 self.addEventListener('install', (event) => {
