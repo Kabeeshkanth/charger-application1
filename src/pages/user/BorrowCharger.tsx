@@ -250,13 +250,10 @@ export default function BorrowCharger({
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="borrowedPerson">Borrowed By</label>
-                    <input
-                        id="borrowedPerson"
-                        type="text"
-                        value={user.username}
-                        readOnly
-                    />
+                    <label>Borrowed By</label>
+                    <div className="read-only-field">
+                      {user.username}
+                    </div>
                     <small className="field-help">
                       This is filled automatically from your logged-in account.
                     </small>
