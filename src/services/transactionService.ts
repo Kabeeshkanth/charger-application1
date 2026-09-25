@@ -99,7 +99,8 @@ export async function returnCharger(
     chargerId: number,
     returnedDate: string,
     returnedTime: string,
-    returnedPerson: string
+    returnedPerson: string,
+    returnedToMemberId: number
 ) {
   const { data, error } = await supabase.rpc(
       'return_charger',
@@ -130,6 +131,7 @@ export async function returnCharger(
             returned_date: returnedDate,
             returned_time: returnedTime,
             returned_person: returnedPerson.trim(),
+            returned_to_member_id: returnedToMemberId,
             status: 'returned',
           })
           .eq('charger_id', chargerId)
@@ -163,6 +165,7 @@ export async function returnCharger(
         returned_date: returnedDate,
         returned_time: returnedTime,
         returned_person: returnedPerson.trim(),
+        returned_to_member_id: returnedToMemberId,
         status: 'returned',
       })
       .eq('charger_id', chargerId)

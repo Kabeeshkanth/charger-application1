@@ -6,6 +6,8 @@ import { returnCharger } from '../../services/transactionService';
 import type { Charger } from '../../types/charger';
 import { FeedbackMessage } from '../../components/FeedbackMessage';
 import { getLocalDateTime } from '../../lib/dateTime';
+import { getItTeamMembers } from '../../services/teamService';
+import type { ItTeamMember } from '../../types/team';
 
 interface ReturnChargerProps {
   onBack: () => void;
@@ -18,7 +20,8 @@ export default function ReturnCharger({
   const [chargerId, setChargerId] = useState('');
   const [returnedDate, setReturnedDate] = useState('');
   const [returnedTime, setReturnedTime] = useState('');
-  const [returnedPerson, setReturnedPerson] = useState('');
+  const [returnedToMemberId, setReturnedToMemberId] = useState('');
+  const [teamMembers, setTeamMembers] = useState<ItTeamMember[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -29,8 +32,22 @@ export default function ReturnCharger({
     setReturnedDate(now.date);
     setReturnedTime(now.time);
 
-    loadChargers();
+    void loadData();
   }, []);
+
+  const loadData = async () => {
+    await Promise.all([loadChargers(), loadTeamMembers()]);
+  };
+
+  const loadTeamMembers = async () => {
+    try {
+      const data = await getItTeamMembers();
+      setTeamMembers(data);
+      setReturnedToMemberId(data.length > 0 ? String(data[0].id) : '');
+    } catch (error) {
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load IT team members.' });
+    }
+  };
 
   const loadChargers = async () => {
     try {
@@ -62,8 +79,9 @@ export default function ReturnCharger({
       return;
     }
 
-    if (!returnedPerson.trim()) {
-      setMessage({ type: 'error', text: 'Please enter your name.' });
+    const returnedToMember = teamMembers.find((member) => String(member.id) === returnedToMemberId);
+    if (!returnedToMember) {
+      setMessage({ type: 'error', text: 'Please select the IT team member who received the charger.' });
       return;
     }
 
@@ -74,7 +92,8 @@ export default function ReturnCharger({
           Number(chargerId),
           returnedDate,
           returnedTime,
-          returnedPerson
+          returnedToMember.name,
+          returnedToMember.id
       );
 
       setChargers((currentChargers) =>
@@ -218,9 +237,7 @@ export default function ReturnCharger({
                     <div>
                       <strong>Return Details</strong>
 
-                      <small>
-                        Confirm the date, time and employee name.
-                      </small>
+                      <small>Confirm the date, time and IT team member.</small>
                     </div>
                   </div>
 
@@ -259,20 +276,24 @@ export default function ReturnCharger({
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="returnedPerson">
-                      Employee Name
-                    </label>
-
-                    <input
-                        id="returnedPerson"
-                        type="text"
-                        placeholder="Enter your name"
-                        value={returnedPerson}
-                        onChange={(e) =>
-                            setReturnedPerson(e.target.value)
-                        }
+                    <label htmlFor="returnedToMember">Returned To</label>
+                    <select
+                        id="returnedToMember"
+                        value={returnedToMemberId}
+                        onChange={(e) => setReturnedToMemberId(e.target.value)}
                         required
-                    />
+                        disabled={teamMembers.length === 0}
+                    >
+                      <option value="">Select an IT team member</option>
+                      {teamMembers.map((member) => (
+                          <option key={member.id} value={member.id}>
+                            {member.name} - {member.position}
+                          </option>
+                      ))}
+                    </select>
+                    {teamMembers.length === 0 && (
+                        <small className="field-help">An admin must add IT team members before a return can be recorded.</small>
+                    )}
                   </div>
 
                   <div className="form-notice return-notice">
