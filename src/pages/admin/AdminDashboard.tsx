@@ -9,7 +9,6 @@ import {
 
 import { getTransactions } from '../../services/transactionService';
 import { getPendingDamageReports } from '../../services/damageService';
-import { createAppUser } from '../../services/authService';
 import { createItTeamMember, getItTeamMembers } from '../../services/teamService';
 import type { ItTeamMember } from '../../types/team';
 
@@ -44,8 +43,6 @@ export default function AdminDashboard({
     const [damaged, setDamaged] = useState(0);
 
     const [loading, setLoading] = useState(true);
-    const [newUsername, setNewUsername] = useState('');
-    const [newPassword, setNewPassword] = useState('');
     const [teamName, setTeamName] = useState('');
     const [teamPosition, setTeamPosition] = useState('');
     const [teamMembers, setTeamMembers] = useState<ItTeamMember[]>([]);
@@ -136,23 +133,6 @@ export default function AdminDashboard({
             setTeamMembers(await getItTeamMembers());
         } catch (error) {
             alert(error instanceof Error ? error.message : 'Failed to load IT team members.');
-        }
-    };
-
-    const handleCreateUser = async (event: React.FormEvent) => {
-        event.preventDefault();
-        if (!newUsername.trim() || !newPassword) {
-            alert('Enter a username and password.');
-            return;
-        }
-
-        try {
-            await createAppUser(newUsername, newPassword);
-            setNewUsername('');
-            setNewPassword('');
-            alert('User created successfully.');
-        } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to create user.');
         }
     };
 
@@ -361,23 +341,9 @@ export default function AdminDashboard({
 
                         </div>
 
-                        <div className="section-title">User & IT Team Management</div>
+                        <div className="section-title">IT Team Management</div>
 
                         <div className="admin-management-grid">
-                            <form className="form-card admin-management-card" onSubmit={handleCreateUser}>
-                                <h3>Create User Login</h3>
-                                <p>Create credentials for a charger-management user.</p>
-                                <div className="form-group">
-                                    <label htmlFor="newUsername">User ID</label>
-                                    <input id="newUsername" value={newUsername} onChange={(event) => setNewUsername(event.target.value)} required />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="newPassword">Password</label>
-                                    <input id="newPassword" type="password" value={newPassword} onChange={(event) => setNewPassword(event.target.value)} required />
-                                </div>
-                                <button className="primary-button full-width" type="submit">Create User</button>
-                            </form>
-
                             <form className="form-card admin-management-card" onSubmit={handleCreateTeamMember}>
                                 <h3>Add IT Team Member</h3>
                                 <p>Add the people available in the return selection list.</p>
