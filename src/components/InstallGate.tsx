@@ -25,6 +25,7 @@ function isRunningAsInstalledApp() {
 
 export default function InstallGate({ children }: InstallGateProps) {
   const [installed, setInstalled] = useState(isRunningAsInstalledApp);
+  const [continueOnWeb, setContinueOnWeb] = useState(false);
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null);
   const [installing, setInstalling] = useState(false);
 
@@ -64,7 +65,7 @@ export default function InstallGate({ children }: InstallGateProps) {
     }
   };
 
-  if (installed) {
+  if (installed || continueOnWeb) {
     return children;
   }
 
@@ -93,6 +94,14 @@ export default function InstallGate({ children }: InstallGateProps) {
         >
           {installing ? 'INSTALLING...' : 'CLICK HERE TO DOWNLOAD AND INSTALL'}
         </a>
+
+        <button
+          className="continue-web-button"
+          type="button"
+          onClick={() => setContinueOnWeb(true)}
+        >
+          CONTINUE WITH WEB
+        </button>
 
         {!installPrompt && (
           <p className="install-instructions">

@@ -482,6 +482,25 @@ a {
     pointer-events: none;
 }
 
+.continue-web-button {
+    width: 100%;
+    min-height: 44px;
+    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: #ffffff;
+    color: var(--text-dark);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+}
+
+.continue-web-button:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
 .install-instructions {
     margin-bottom: 0 !important;
 }
