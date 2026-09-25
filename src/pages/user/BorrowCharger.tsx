@@ -177,7 +177,7 @@ export default function BorrowCharger({
                         }
                         required
                     >
-                      <option value="">
+                      <option value="" disabled>
                         Select a charger
                       </option>
 
