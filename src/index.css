@@ -550,6 +550,14 @@ a {
     border-bottom: 0;
 }
 
+.user-row-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-left: auto;
+}
+
 .danger-button {
     min-height: 36px;
     padding: 8px 12px;
@@ -570,6 +578,14 @@ a {
 @media (max-width: 700px) {
     .admin-management-grid {
         grid-template-columns: 1fr;
+    }
+
+    .team-member-row {
+        align-items: flex-start;
+    }
+
+    .user-row-actions {
+        flex-shrink: 0;
     }
 }
 

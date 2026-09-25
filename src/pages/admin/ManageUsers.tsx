@@ -100,19 +100,21 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
             {loading ? <p>Loading users...</p> : users.map((appUser) => (
               <div className="team-member-row" key={appUser.user_id}>
                 <span><strong>{appUser.username}</strong> ({appUser.role})</span>
-                <button className="secondary-button" type="button" onClick={() => {
-                  setEditingId(appUser.user_id);
-                  setUsername(appUser.username);
-                  setPassword('');
-                }}>Edit</button>
-                <button
-                  className="danger-button"
-                  type="button"
-                  onClick={() => void handleDelete(appUser)}
-                  disabled={appUser.role === 'admin'}
-                >
-                  Delete
-                </button>
+                <div className="user-row-actions">
+                  <button className="secondary-button" type="button" onClick={() => {
+                    setEditingId(appUser.user_id);
+                    setUsername(appUser.username);
+                    setPassword('');
+                  }}>Edit</button>
+                  <button
+                    className="danger-button"
+                    type="button"
+                    onClick={() => void handleDelete(appUser)}
+                    disabled={appUser.role === 'admin'}
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
             ))}
           </div>
