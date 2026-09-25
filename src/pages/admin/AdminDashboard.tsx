@@ -9,8 +9,6 @@ import {
 
 import { getTransactions } from '../../services/transactionService';
 import { getPendingDamageReports } from '../../services/damageService';
-import { createItTeamMember, getItTeamMembers } from '../../services/teamService';
-import type { ItTeamMember } from '../../types/team';
 
 interface AdminDashboardProps {
     user: AppUser;
@@ -43,9 +41,6 @@ export default function AdminDashboard({
     const [damaged, setDamaged] = useState(0);
 
     const [loading, setLoading] = useState(true);
-    const [teamName, setTeamName] = useState('');
-    const [teamPosition, setTeamPosition] = useState('');
-    const [teamMembers, setTeamMembers] = useState<ItTeamMember[]>([]);
 
     const loadDashboard = async () => {
         try {
@@ -125,33 +120,7 @@ export default function AdminDashboard({
 
     useEffect(() => {
         loadDashboard();
-        void loadTeamMembers();
     }, []);
-
-    const loadTeamMembers = async () => {
-        try {
-            setTeamMembers(await getItTeamMembers());
-        } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to load IT team members.');
-        }
-    };
-
-    const handleCreateTeamMember = async (event: React.FormEvent) => {
-        event.preventDefault();
-        if (!teamName.trim() || !teamPosition.trim()) {
-            alert('Enter the team member name and position.');
-            return;
-        }
-
-        try {
-            await createItTeamMember(teamName, teamPosition);
-            setTeamName('');
-            setTeamPosition('');
-            await loadTeamMembers();
-        } catch (error) {
-            alert(error instanceof Error ? error.message : 'Failed to add IT team member.');
-        }
-    };
 
     return (
         <div className="app-page">
@@ -303,7 +272,7 @@ export default function AdminDashboard({
                                 className="primary-button"
                                 onClick={onUsers}
                             >
-                                + Add User
+                                + Add Users and IT Team Members
                             </button>
 
 
@@ -339,38 +308,6 @@ export default function AdminDashboard({
                                 Borrow & Return Reports
                             </button>
 
-                        </div>
-
-                        <div className="section-title">IT Team Management</div>
-
-                        <div className="admin-management-grid">
-                            <form className="form-card admin-management-card" onSubmit={handleCreateTeamMember}>
-                                <h3>Add IT Team Member</h3>
-                                <p>Add the people available in the return selection list.</p>
-                                <div className="form-group">
-                                    <label htmlFor="teamName">Name</label>
-                                    <input id="teamName" value={teamName} onChange={(event) => setTeamName(event.target.value)} required />
-                                </div>
-                                <div className="form-group">
-                                    <label htmlFor="teamPosition">Position</label>
-                                    <input id="teamPosition" value={teamPosition} onChange={(event) => setTeamPosition(event.target.value)} required />
-                                </div>
-                                <button className="primary-button full-width" type="submit">Add Team Member</button>
-                            </form>
-                        </div>
-
-                        <div className="team-member-list">
-                            <h3>IT Team Members</h3>
-                            {teamMembers.length === 0 ? (
-                                <p>No IT team members have been added.</p>
-                            ) : (
-                                teamMembers.map((member) => (
-                                    <div className="team-member-row" key={member.id}>
-                                        <strong>{member.name}</strong>
-                                        <span>{member.position}</span>
-                                    </div>
-                                ))
-                            )}
                         </div>
 
                     </>

@@ -512,6 +512,12 @@ a {
     margin-bottom: 24px;
 }
 
+.management-options {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
 .admin-management-card {
     max-width: none;
     padding: 24px;

@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { createAppUser, deleteAppUser, getAppUsers, updateAppUser } from '../../services/authService';
 import type { AppUser } from '../../types/auth';
+import { createItTeamMember, getItTeamMembers } from '../../services/teamService';
+import type { ItTeamMember } from '../../types/team';
 
 interface ManageUsersProps {
   onBack: () => void;
@@ -12,6 +14,10 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
   const [password, setPassword] = useState('');
   const [editingId, setEditingId] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
+  const [section, setSection] = useState<'users' | 'staff'>('users');
+  const [teamMembers, setTeamMembers] = useState<ItTeamMember[]>([]);
+  const [teamName, setTeamName] = useState('');
+  const [teamPosition, setTeamPosition] = useState('');
 
   const loadUsers = async () => {
     setLoading(true);
@@ -26,7 +32,16 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
 
   useEffect(() => {
     void loadUsers();
+    void loadTeamMembers();
   }, []);
+
+  const loadTeamMembers = async () => {
+    try {
+      setTeamMembers(await getItTeamMembers());
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to load IT staff.');
+    }
+  };
 
   const resetForm = () => {
     setUsername('');
@@ -70,6 +85,18 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
     }
   };
 
+  const handleAddStaff = async (event: React.FormEvent) => {
+    event.preventDefault();
+    try {
+      await createItTeamMember(teamName, teamPosition);
+      setTeamName('');
+      setTeamPosition('');
+      await loadTeamMembers();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to add IT staff.');
+    }
+  };
+
   return (
     <div className="app-page">
       <header className="app-header">
@@ -77,8 +104,16 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
       </header>
       <main className="dashboard">
         <button className="back-button" onClick={onBack}>← Back to Dashboard</button>
-        <div className="section-title">User Management</div>
-        <div className="admin-management-grid">
+        <div className="management-options">
+          <button className={section === 'users' ? 'primary-button' : 'secondary-button'} type="button" onClick={() => setSection('users')}>
+            Add User
+          </button>
+          <button className={section === 'staff' ? 'primary-button' : 'secondary-button'} type="button" onClick={() => setSection('staff')}>
+            Add IT Staff
+          </button>
+        </div>
+        {section === 'users' ? (
+          <div className="admin-management-grid">
           <form className="form-card admin-management-card" onSubmit={handleSubmit}>
             <h3>{editingId === null ? 'Create User' : 'Edit User'}</h3>
             <p>Create or update a user ID and password.</p>
@@ -118,7 +153,33 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
               </div>
             ))}
           </div>
-        </div>
+          </div>
+        ) : (
+          <div className="admin-management-grid">
+            <form className="form-card admin-management-card" onSubmit={handleAddStaff}>
+              <h3>Add IT Staff</h3>
+              <p>Add a team member for the Returned To selection list.</p>
+              <div className="form-group">
+                <label htmlFor="teamName">Name</label>
+                <input id="teamName" value={teamName} onChange={(event) => setTeamName(event.target.value)} required />
+              </div>
+              <div className="form-group">
+                <label htmlFor="teamPosition">Position</label>
+                <input id="teamPosition" value={teamPosition} onChange={(event) => setTeamPosition(event.target.value)} required />
+              </div>
+              <button className="primary-button full-width" type="submit">Add IT Staff</button>
+            </form>
+            <div className="team-member-list">
+              <h3>IT Staff Members</h3>
+              {teamMembers.length === 0 ? <p>No IT staff members have been added.</p> : teamMembers.map((member) => (
+                <div className="team-member-row" key={member.id}>
+                  <span><strong>{member.name}</strong></span>
+                  <span>{member.position}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
