@@ -95,7 +95,7 @@ export default function ReturnedChargers({
                       <th>Charger</th>
                       <th>Borrowed By</th>
                       <th>Borrowed Date</th>
-                      <th>Returned By</th>
+                      <th>Returned To</th>
                       <th>Returned Date</th>
                       <th>Returned Time</th>
                       <th>Status</th>

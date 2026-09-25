@@ -113,7 +113,7 @@ export default function ChargerReports({ onBack }: ChargerReportsProps) {
                                     <th>Borrowed By</th>
                                     <th>Returned Date</th>
                                     <th>Returned Time</th>
-                                    <th>Returned By</th>
+                                    <th>Returned To</th>
                                     <th>Status</th>
                                 </tr>
                                 </thead>

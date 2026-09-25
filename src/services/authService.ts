@@ -10,6 +10,22 @@ export async function createAppUser(username: string, password: string) {
   if (error) {
     throw new Error(error.message);
   }
+
+}
+
+export async function getAppUsers(): Promise<AppUser[]> {
+  const { data, error } = await supabase.rpc('list_app_users');
+  if (error) throw new Error(error.message);
+  return (data || []) as AppUser[];
+}
+
+export async function updateAppUser(userId: number, username: string, password: string) {
+  const { error } = await supabase.rpc('update_app_user', {
+    p_user_id: userId,
+    p_username: username.trim(),
+    p_password: password || null,
+  });
+  if (error) throw new Error(error.message);
 }
 
 export async function login(

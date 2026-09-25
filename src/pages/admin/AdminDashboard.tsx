@@ -22,6 +22,7 @@ interface AdminDashboardProps {
     onReturned: () => void;
     onDamaged: () => void;
     onReports: () => void;
+    onUsers: () => void;
 }
 
 export default function AdminDashboard({
@@ -33,6 +34,7 @@ export default function AdminDashboard({
                                            onReturned,
                                            onDamaged,
                                            onReports,
+                                           onUsers,
                                        }: AdminDashboardProps) {
 
     const [total, setTotal] = useState(0);
@@ -315,6 +317,13 @@ export default function AdminDashboard({
                                 onClick={onAdd}
                             >
                                 + Add Charger
+                            </button>
+
+                            <button
+                                className="primary-button"
+                                onClick={onUsers}
+                            >
+                                + Add User
                             </button>
 
 
