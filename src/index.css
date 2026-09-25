@@ -550,6 +550,23 @@ a {
     border-bottom: 0;
 }
 
+.danger-button {
+    min-height: 36px;
+    padding: 8px 12px;
+    border: 1px solid #efb8c2;
+    border-radius: 8px;
+    background: #fff5f6;
+    color: var(--danger);
+    font-size: 12px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.danger-button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 @media (max-width: 700px) {
     .admin-management-grid {
         grid-template-columns: 1fr;

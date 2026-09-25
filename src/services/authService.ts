@@ -28,6 +28,13 @@ export async function updateAppUser(userId: number, username: string, password: 
   if (error) throw new Error(error.message);
 }
 
+export async function deleteAppUser(userId: number) {
+  const { error } = await supabase.rpc('delete_app_user', {
+    p_user_id: userId,
+  });
+  if (error) throw new Error(error.message);
+}
+
 export async function login(
     username: string,
     password: string

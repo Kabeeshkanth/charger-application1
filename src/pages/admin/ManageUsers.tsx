@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createAppUser, getAppUsers, updateAppUser } from '../../services/authService';
+import { createAppUser, deleteAppUser, getAppUsers, updateAppUser } from '../../services/authService';
 import type { AppUser } from '../../types/auth';
 
 interface ManageUsersProps {
@@ -49,6 +49,27 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
     }
   };
 
+  const handleDelete = async (appUser: AppUser) => {
+    if (appUser.role === 'admin') {
+      alert('Admin accounts cannot be deleted here.');
+      return;
+    }
+
+    if (!window.confirm(`Delete user "${appUser.username}"?`)) {
+      return;
+    }
+
+    try {
+      await deleteAppUser(appUser.user_id);
+      if (editingId === appUser.user_id) {
+        resetForm();
+      }
+      await loadUsers();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to delete user.');
+    }
+  };
+
   return (
     <div className="app-page">
       <header className="app-header">
@@ -84,6 +105,14 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
                   setUsername(appUser.username);
                   setPassword('');
                 }}>Edit</button>
+                <button
+                  className="danger-button"
+                  type="button"
+                  onClick={() => void handleDelete(appUser)}
+                  disabled={appUser.role === 'admin'}
+                >
+                  Delete
+                </button>
               </div>
             ))}
           </div>
