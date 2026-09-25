@@ -41,12 +41,7 @@ export default function BorrowCharger({
       const data = await getAvailableChargers();
 
       setChargers(data);
-
-      if (data.length > 0) {
-        setChargerId(String(data[0].id));
-      } else {
-        setChargerId('');
-      }
+      setChargerId('');
     } catch (error) {
       setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load available chargers.' });
     } finally {

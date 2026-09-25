@@ -43,7 +43,7 @@ export default function ReturnCharger({
     try {
       const data = await getItTeamMembers();
       setTeamMembers(data);
-      setReturnedToMemberId(data.length > 0 ? String(data[0].id) : '');
+      setReturnedToMemberId('');
     } catch (error) {
       setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load IT team members.' });
     }
@@ -56,12 +56,7 @@ export default function ReturnCharger({
       const data = await getBorrowedChargers();
 
       setChargers(data);
-
-      if (data.length > 0) {
-        setChargerId(String(data[0].id));
-      } else {
-        setChargerId('');
-      }
+      setChargerId('');
     } catch (error) {
       setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load borrowed chargers.' });
     } finally {
