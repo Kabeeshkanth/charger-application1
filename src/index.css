@@ -537,8 +537,9 @@ a {
 }
 
 .team-member-row {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
     gap: 16px;
     padding: 12px 0;
     border-bottom: 1px solid var(--border);
@@ -553,9 +554,9 @@ a {
 .user-row-actions {
     display: flex;
     align-items: center;
-    justify-content: flex-end;
     gap: 8px;
-    margin-left: auto;
+    justify-self: end;
+    min-width: 148px;
 }
 
 .danger-button {
@@ -585,7 +586,7 @@ a {
     }
 
     .user-row-actions {
-        flex-shrink: 0;
+        min-width: 148px;
     }
 }
 
