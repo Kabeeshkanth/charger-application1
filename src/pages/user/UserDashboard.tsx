@@ -1,4 +1,6 @@
 import type { AppUser } from '../../types/auth';
+import { useEffect, useState } from 'react';
+import { getUserReturnStatus } from '../../services/transactionService';
 
 interface UserDashboardProps {
     user: AppUser;
@@ -13,8 +15,25 @@ export default function UserDashboard({
                                           onBorrow,
                                           onReturn,
                                       }: UserDashboardProps) {
+    const [returnStatus, setReturnStatus] = useState<{ status: string; chargerName: string } | null>(null);
+    useEffect(() => {
+        let active = true;
+        const loadStatus = async () => {
+            const result = await getUserReturnStatus(user.username);
+            const charger = result?.chargers as { charger_name: string } | null | undefined;
+            if (active && result) setReturnStatus({ status: result.status, chargerName: charger?.charger_name || 'Your charger' });
+        };
+        void loadStatus();
+        const timer = window.setInterval(() => void loadStatus(), 10000);
+        return () => { active = false; window.clearInterval(timer); };
+    }, [user.username]);
     return (
         <div className="app-page user-app-page">
+            {returnStatus && <div className={`return-status-popup ${returnStatus.status === 'returned' ? 'return-status-success' : ''}`}>
+                <strong>{returnStatus.status === 'returned' ? 'Return Confirmed' : 'Return Pending Confirmation'}</strong>
+                <span>{returnStatus.chargerName} - {returnStatus.status === 'returned' ? 'An admin confirmed receipt.' : 'Waiting for the selected admin to approve receipt.'}</span>
+                {returnStatus.status === 'returned' && <button onClick={() => setReturnStatus(null)}>Close</button>}
+            </div>}
             <header className="app-header">
                 <div className="brand">
                     <div className="brand-mark">M</div>

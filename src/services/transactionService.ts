@@ -99,82 +99,57 @@ export async function returnCharger(
     chargerId: number,
     returnedDate: string,
     returnedTime: string,
-    returnedPerson: string,
-    returnedToMemberId: number
+    returnedToAdminId: number,
+    returnedToAdminUsername: string,
+    returnedByUsername: string
 ) {
-  const { data, error } = await supabase.rpc(
-      'return_charger',
-      {
-        p_charger_id: chargerId,
-        p_returned_date: returnedDate,
-        p_returned_time: returnedTime,
-        p_returned_person: returnedPerson.trim(),
-      }
-  );
-
-  if (error) {
-    if (error.message.toLowerCase().includes('charger_id') &&
-        error.message.toLowerCase().includes('ambiguous')) {
-      const { error: chargerError } = await supabase
-          .from('chargers')
-          .update({ status: 'available' })
-          .eq('id', chargerId)
-          .eq('status', 'borrowed');
-
-      if (chargerError) {
-        throw new Error(chargerError.message);
-      }
-
-      const { error: transactionError } = await supabase
-          .from('charger_transactions')
-          .update({
-            returned_date: returnedDate,
-            returned_time: returnedTime,
-            returned_person: returnedPerson.trim(),
-            returned_to_member_id: returnedToMemberId,
-            status: 'returned',
-          })
-          .eq('charger_id', chargerId)
-          .eq('status', 'borrowed');
-
-      if (transactionError) {
-        throw new Error(transactionError.message);
-      }
-
-      return null;
-    }
-
-    throw new Error(error.message);
-  }
-
-  // Keep the charger and its active transaction synchronized even when the
-  // database function completes without updating both records.
-  const { error: chargerError } = await supabase
-      .from('chargers')
-      .update({ status: 'available' })
-      .eq('id', chargerId)
-      .eq('status', 'borrowed');
-
-  if (chargerError) {
-    throw new Error(chargerError.message);
-  }
-
   const { error: transactionError } = await supabase
       .from('charger_transactions')
       .update({
         returned_date: returnedDate,
         returned_time: returnedTime,
-        returned_person: returnedPerson.trim(),
-        returned_to_member_id: returnedToMemberId,
-        status: 'returned',
+        returned_person: returnedToAdminUsername.trim(),
+        returned_by_username: returnedByUsername.trim(),
+        returned_to_admin_id: returnedToAdminId,
+        status: 'return_pending',
       })
       .eq('charger_id', chargerId)
       .eq('status', 'borrowed');
-
   if (transactionError) {
     throw new Error(transactionError.message);
   }
 
+  return null;
+}
+
+export async function getPendingReturns(adminUserId: number) {
+  const { data, error } = await supabase
+      .from('charger_transactions')
+      .select('*, chargers(charger_name)')
+      .eq('status', 'return_pending')
+      .eq('returned_to_admin_id', adminUserId)
+      .order('id', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
+export async function approveChargerReturn(transactionId: number, adminUserId: number) {
+  const { error } = await supabase.rpc('approve_charger_return', {
+    p_transaction_id: transactionId,
+    p_admin_user_id: adminUserId,
+  });
+  if (error) throw new Error(error.message);
+}
+
+export async function getUserReturnStatus(username: string) {
+  const { data, error } = await supabase.from('charger_transactions')
+      .select('id, status, returned_date, returned_time, returned_person, chargers(charger_name)')
+      .eq('returned_by_username', username)
+      .in('status', ['return_pending', 'returned'])
+      .order('id', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+  if (error) throw new Error(error.message);
   return data;
 }
 

@@ -6,22 +6,24 @@ import { returnCharger } from '../../services/transactionService';
 import type { Charger } from '../../types/charger';
 import { FeedbackMessage } from '../../components/FeedbackMessage';
 import { getLocalDateTime } from '../../lib/dateTime';
-import { getItTeamMembers } from '../../services/teamService';
-import type { ItTeamMember } from '../../types/team';
+import type { AppUser } from '../../types/auth';
+import { getAdminUsers } from '../../services/authService';
 
 interface ReturnChargerProps {
+  user: AppUser;
   onBack: () => void;
 }
 
 export default function ReturnCharger({
+                                        user,
                                         onBack,
                                       }: ReturnChargerProps) {
   const [chargers, setChargers] = useState<Charger[]>([]);
   const [chargerId, setChargerId] = useState('');
   const [returnedDate, setReturnedDate] = useState('');
   const [returnedTime, setReturnedTime] = useState('');
-  const [returnedToMemberId, setReturnedToMemberId] = useState('');
-  const [teamMembers, setTeamMembers] = useState<ItTeamMember[]>([]);
+  const [returnedToAdminId, setReturnedToAdminId] = useState('');
+  const [admins, setAdmins] = useState<AppUser[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -32,20 +34,14 @@ export default function ReturnCharger({
     setReturnedDate(now.date);
     setReturnedTime(now.time);
 
-    void loadData();
+    void Promise.all([loadChargers(), loadAdmins()]);
   }, []);
 
-  const loadData = async () => {
-    await Promise.all([loadChargers(), loadTeamMembers()]);
-  };
-
-  const loadTeamMembers = async () => {
+  const loadAdmins = async () => {
     try {
-      const data = await getItTeamMembers();
-      setTeamMembers(data);
-      setReturnedToMemberId('');
+      setAdmins(await getAdminUsers());
     } catch (error) {
-      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load IT team members.' });
+      setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to load admin usernames.' });
     }
   };
 
@@ -74,9 +70,9 @@ export default function ReturnCharger({
       return;
     }
 
-    const returnedToMember = teamMembers.find((member) => String(member.id) === returnedToMemberId);
-    if (!returnedToMember) {
-      setMessage({ type: 'error', text: 'Please select the IT team member who received the charger.' });
+    const selectedAdmin = admins.find((admin) => String(admin.user_id) === returnedToAdminId);
+    if (!selectedAdmin) {
+      setMessage({ type: 'error', text: 'Please select the admin receiving the charger.' });
       return;
     }
 
@@ -87,15 +83,16 @@ export default function ReturnCharger({
           Number(chargerId),
           returnedDate,
           returnedTime,
-          returnedToMember.name,
-          returnedToMember.id
+          selectedAdmin.user_id,
+          selectedAdmin.username,
+          user.username
       );
 
       setChargers((currentChargers) =>
           currentChargers.filter((charger) => charger.id !== Number(chargerId))
       );
       setChargerId('');
-      setMessage({ type: 'success', text: 'Charger returned successfully.' });
+      setMessage({ type: 'success', text: 'Return submitted. Waiting for admin confirmation.' });
       window.setTimeout(onBack, 1200);
     } catch (error) {
       setMessage({ type: 'error', text: error instanceof Error ? error.message : 'Failed to return charger.' });
@@ -232,8 +229,29 @@ export default function ReturnCharger({
                     <div>
                       <strong>Return Details</strong>
 
-                      <small>Confirm the date, time and IT team member.</small>
+                      <small>Confirm the date, time and receiving admin.</small>
                     </div>
+                  </div>
+
+                  <div className="form-group">
+                    <label htmlFor="returnedToAdmin">Returned To</label>
+                    <select
+                        id="returnedToAdmin"
+                        value={returnedToAdminId}
+                        onChange={(event) => setReturnedToAdminId(event.target.value)}
+                        required
+                        disabled={admins.length === 0}
+                    >
+                      <option value="">Select an admin username</option>
+                      {admins.map((admin) => (
+                          <option key={admin.user_id} value={admin.user_id}>
+                            {admin.username}
+                          </option>
+                      ))}
+                    </select>
+                    {admins.length === 0 && (
+                        <small className="field-help">No active admin usernames are available.</small>
+                    )}
                   </div>
 
                   <div className="form-row">
@@ -268,27 +286,6 @@ export default function ReturnCharger({
                           required
                       />
                     </div>
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="returnedToMember">Returned To</label>
-                    <select
-                        id="returnedToMember"
-                        value={returnedToMemberId}
-                        onChange={(e) => setReturnedToMemberId(e.target.value)}
-                        required
-                        disabled={teamMembers.length === 0}
-                    >
-                      <option value="">Select an IT team member</option>
-                      {teamMembers.map((member) => (
-                          <option key={member.id} value={member.id}>
-                            {member.name} - {member.position}
-                          </option>
-                      ))}
-                    </select>
-                    {teamMembers.length === 0 && (
-                        <small className="field-help">An admin must add IT team members before a return can be recorded.</small>
-                    )}
                   </div>
 
                   <div className="form-notice return-notice">

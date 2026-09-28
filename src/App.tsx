@@ -11,6 +11,7 @@ import ReturnedChargers from './pages/admin/ReturnedChargers';
 import DamagedChargers from './pages/admin/DamagedChargers';
 import ChargerReports from './pages/admin/ChargerReports';
 import ManageUsers from './pages/admin/ManageUsers';
+import ReturnApprovals from './pages/admin/ReturnApprovals';
 
 import UserDashboard from './pages/user/UserDashboard';
 import BorrowCharger from './pages/user/BorrowCharger';
@@ -28,7 +29,8 @@ type Screen =
     | 'returned'
     | 'damaged'
     | 'reports'
-    | 'users';
+    | 'users'
+    | 'returnApprovals';
 
 const STORED_USER_KEY = 'charger-manager-user';
 
@@ -139,6 +141,9 @@ function App() {
     if (screen === 'users') {
       return <ManageUsers onBack={() => setScreen('dashboard')} />;
     }
+    if (screen === 'returnApprovals') {
+      return <ReturnApprovals user={user} onBack={() => setScreen('dashboard')} />;
+    }
 
     return (
         <AdminDashboard
@@ -151,6 +156,7 @@ function App() {
             onDamaged={() => setScreen('damaged')}
             onReports={() => setScreen('reports')}
             onUsers={() => setScreen('users')}
+            onReturnApprovals={() => setScreen('returnApprovals')}
         />
     );
   }
@@ -171,6 +177,7 @@ function App() {
   if (screen === 'return') {
     return (
         <ReturnCharger
+            user={user}
             onBack={() => setScreen('dashboard')}
         />
     );

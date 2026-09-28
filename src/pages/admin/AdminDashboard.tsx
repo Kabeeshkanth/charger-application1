@@ -20,6 +20,7 @@ interface AdminDashboardProps {
     onDamaged: () => void;
     onReports: () => void;
     onUsers: () => void;
+    onReturnApprovals: () => void;
 }
 
 export default function AdminDashboard({
@@ -32,6 +33,7 @@ export default function AdminDashboard({
                                            onDamaged,
                                            onReports,
                                            onUsers,
+                                           onReturnApprovals,
                                        }: AdminDashboardProps) {
 
     const [total, setTotal] = useState(0);
@@ -206,8 +208,8 @@ export default function AdminDashboard({
                 </span>
 
                                 <span>
-                  Available
-                </span>
+Currently Available for Use
+                                </span>
 
                             </div>
 
@@ -272,7 +274,10 @@ export default function AdminDashboard({
                                 className="primary-button"
                                 onClick={onUsers}
                             >
-                                + Add Users and IT Team Members
+                                + Add Users
+                            </button>
+                            <button className="primary-button return-approval-button" onClick={onReturnApprovals}>
+                                Return Approvals
                             </button>
 
 
