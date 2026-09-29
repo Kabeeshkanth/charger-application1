@@ -104,7 +104,7 @@ export async function returnCharger(
     returnedToAdminUsername: string,
     returnedByUsername: string
 ) {
-  const { error: transactionError } = await supabase
+  const { data: updatedTransactions, error: transactionError } = await supabase
       .from('charger_transactions')
       .update({
         returned_date: returnedDate,
@@ -115,9 +115,14 @@ export async function returnCharger(
         status: 'return_pending',
       })
       .eq('charger_id', chargerId)
-      .eq('status', 'borrowed');
+      .eq('status', 'borrowed')
+      .select('id');
   if (transactionError) {
     throw new Error(transactionError.message);
+  }
+
+  if (!updatedTransactions || updatedTransactions.length === 0) {
+    throw new Error('This charger is no longer borrowed or has already been returned.');
   }
 
   return null;
