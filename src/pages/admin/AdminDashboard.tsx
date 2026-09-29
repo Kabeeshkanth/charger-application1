@@ -9,6 +9,7 @@ import {
 
 import { getTransactions } from '../../services/transactionService';
 import { getPendingDamageReports } from '../../services/damageService';
+import type { ChargerTransaction } from '../../types/transaction';
 
 interface AdminDashboardProps {
     user: AppUser;
@@ -96,7 +97,7 @@ export default function AdminDashboard({
                 .toLocaleDateString('en-CA');
 
             const returnedTodayCount = transactions.filter(
-                (transaction: any) =>
+                (transaction: ChargerTransaction) =>
                     transaction.status === 'returned' &&
                     transaction.returned_date === today
             ).length;

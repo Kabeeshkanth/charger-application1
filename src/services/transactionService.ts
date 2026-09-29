@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import type { ChargerTransaction } from '../types/transaction';
 
 export async function borrowCharger(
     chargerId: number,
@@ -153,7 +154,7 @@ export async function getUserReturnStatus(username: string) {
   return data;
 }
 
-export async function getTransactions() {
+export async function getTransactions(): Promise<ChargerTransaction[]> {
   const { data, error } = await supabase
       .from('charger_transactions')
       .select(`
@@ -168,7 +169,7 @@ export async function getTransactions() {
     throw new Error(error.message);
   }
 
-  return data || [];
+  return (data || []) as ChargerTransaction[];
 }
 
 export async function getBorrowedTransactions() {
