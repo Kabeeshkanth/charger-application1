@@ -22,6 +22,11 @@ interface AdminDashboardProps {
     onReports: () => void;
     onUsers: () => void;
     onReturnApprovals: () => void;
+    onAvailableResources: () => void;
+    onBorrowedPhones: () => void;
+    onBorrowedResources: () => void;
+    onDamagedResources: () => void;
+    onReportsResources: () => void;
 }
 
 export default function AdminDashboard({
@@ -35,6 +40,11 @@ export default function AdminDashboard({
                                            onReports,
                                            onUsers,
                                            onReturnApprovals,
+                                           onAvailableResources,
+                                           onBorrowedPhones,
+                                           onBorrowedResources,
+                                           onDamagedResources,
+                                           onReportsResources,
                                        }: AdminDashboardProps) {
 
     const [total, setTotal] = useState(0);
@@ -167,7 +177,7 @@ export default function AdminDashboard({
                     </h2>
 
                     <p>
-                        Charger management overview
+                        Phone and charger management overview
                     </p>
 
                 </div>
@@ -268,7 +278,7 @@ Currently Available for Use
                                 className="primary-button"
                                 onClick={onAdd}
                             >
-                                + Add Charger
+                                + Add Charger and Phones
                             </button>
 
                             <button
@@ -280,39 +290,12 @@ Currently Available for Use
                             <button className="primary-button return-approval-button" onClick={onReturnApprovals}>
                                 Return Approvals
                             </button>
+                            <button onClick={onAvailableResources}>Available Phones & Chargers</button>
+                            <button onClick={onBorrowedResources}>Borrowed Phones & Chargers</button>
+                            <button onClick={onDamagedResources}>Damaged Phones & Chargers</button>
+                            <button onClick={onReportsResources}>Borrow & Return Reports</button>
 
 
-                            <button
-                                onClick={onAvailable}
-                            >
-                                Available Chargers
-                            </button>
-
-
-                            <button
-                                onClick={onBorrowed}
-                            >
-                                Borrowed Chargers
-                            </button>
-
-
-                            <button
-                                onClick={onReturned}
-                            >
-                                Returned History
-                            </button>
-
-                            <button
-                                onClick={onDamaged}
-                            >
-                                Damaged Chargers
-                            </button>
-
-                            <button
-                                onClick={onReports}
-                            >
-                                Borrow & Return Reports
-                            </button>
 
                         </div>
 
