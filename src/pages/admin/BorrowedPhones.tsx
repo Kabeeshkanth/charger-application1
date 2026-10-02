@@ -1,0 +1,8 @@
+import { useEffect, useState } from 'react';
+import { getBorrowedPhones } from '../../services/phoneService';
+import { getPhoneTransactions } from '../../services/phoneTransactionService';
+export default function BorrowedPhones({ onBack }: { onBack: () => void }) {
+  const [rows, setRows] = useState<any[]>([]); const load = async () => { const [phones, transactions] = await Promise.all([getBorrowedPhones(), getPhoneTransactions()]); const map = new Map(transactions.filter(row => row.status === 'borrowed').map(row => [row.phone_id, row])); setRows(phones.map(phone => ({ ...phone, transaction: map.get(phone.id) }))); };
+  useEffect(() => { void load(); }, []);
+  return <div className="app-page"><header className="app-header"><div><h1>MELWIRE LANKA (PVT) LTD</h1><p>PHONE & CHARGER MANAGEMENT SYSTEM</p></div></header><main className="dashboard"><button className="back-button" onClick={onBack}>← Back</button><div className="data-card"><div className="data-card-header"><div><h2>Borrowed Phones</h2><p>Phones currently issued to employees.</p></div><span className="count-badge">{rows.length}</span></div>{rows.length === 0 ? <div className="empty-state">No phones are currently borrowed.</div> : <div className="table-wrapper"><table><thead><tr><th>Phone</th><th>Phone No.</th><th>Borrowed By</th><th>Department</th><th>Date</th><th>Time</th></tr></thead><tbody>{rows.map(row => <tr key={row.id}><td>{row.phone_identifier}</td><td>{row.phone_number}</td><td>{row.transaction?.borrowed_person || 'Not recorded'}</td><td>{row.transaction?.department || '—'}</td><td>{row.transaction?.borrowed_date || '—'}</td><td>{row.transaction?.borrowed_time || '—'}</td></tr>)}</tbody></table></div>}</div></main></div>;
+}

@@ -1,0 +1,3 @@
+export default function ResourceManagement({ onBack, onAddCharger, onAddPhone }: { onBack: () => void; onAddCharger: () => void; onAddPhone: () => void }) {
+  return <div className="app-page"><header className="app-header"><div><h1>MELWIRE LANKA (PVT) LTD</h1><p>PHONE & CHARGER MANAGEMENT SYSTEM</p></div></header><main className="dashboard"><button className="back-button" onClick={onBack}>← Back to Dashboard</button><div className="data-card"><h2>Add Phones & Chargers</h2><p>Choose the device you want to register.</p><div className="menu-grid"><button className="primary-button" onClick={onAddCharger}>+ Add Charger</button><button className="primary-button" onClick={onAddPhone}>+ Add Phone</button></div></div></main></div>;
+}
