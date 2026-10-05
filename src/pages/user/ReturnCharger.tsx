@@ -114,7 +114,7 @@ export default function ReturnCharger({
         )}
         <header className="app-header">
           <div className="brand">
-            <div className="brand-mark">M</div>
+            <img className="brand-mark" src="/melwa-logo.jpg" alt="MELWA" />
 
             <div>
               <h1>MELWIRE LANKA (PVT) LTD</h1>

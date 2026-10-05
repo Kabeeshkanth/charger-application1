@@ -2,6 +2,7 @@ import type { AppUser } from '../../types/auth';
 import { useEffect, useState } from 'react';
 import { getUserReturnStatus } from '../../services/transactionService';
 import { getUserPhoneReturnStatus } from '../../services/phoneTransactionService';
+import ReturnNotifications from '../../components/ReturnNotifications';
 
 interface UserDashboardProps {
     user: AppUser;
@@ -48,6 +49,7 @@ export default function UserDashboard({
     }, [user.username]);
     return (
         <div className="app-page user-app-page">
+            <ReturnNotifications user={user} />
             {returnStatus && <div className={`return-status-popup ${returnStatus.status === 'returned' ? 'return-status-success' : ''}`}>
                 <strong>{returnStatus.status === 'returned' ? 'Return Confirmed' : 'Return Pending Confirmation'}</strong>
                 <span>{returnStatus.deviceName} - {returnStatus.status === 'returned' ? 'An admin confirmed receipt.' : 'Waiting for the selected admin to approve receipt.'}</span>
@@ -80,7 +82,7 @@ export default function UserDashboard({
             )}
             <header className="app-header">
                 <div className="brand">
-                    <div className="brand-mark">M</div>
+                    <img className="brand-mark" src="/melwa-logo.jpg" alt="MELWA" />
 
                     <div>
                         <h1>MELWIRE LANKA (PVT) LTD</h1>

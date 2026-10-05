@@ -6,10 +6,13 @@ import {
     getAllChargers,
     getBorrowedChargers,
 } from '../../services/chargerService';
+import { getAllPhones } from '../../services/phoneService';
+import { getPhoneDamageReports } from '../../services/phoneDamageService';
 
 import { getTransactions } from '../../services/transactionService';
 import { getPendingDamageReports } from '../../services/damageService';
 import type { ChargerTransaction } from '../../types/transaction';
+import ReturnNotifications from '../../components/ReturnNotifications';
 
 interface AdminDashboardProps {
     user: AppUser;
@@ -52,6 +55,10 @@ export default function AdminDashboard({
     const [borrowed, setBorrowed] = useState(0);
     const [returnedToday, setReturnedToday] = useState(0);
     const [damaged, setDamaged] = useState(0);
+    const [phoneTotal, setPhoneTotal] = useState(0);
+    const [phoneAvailable, setPhoneAvailable] = useState(0);
+    const [phoneBorrowed, setPhoneBorrowed] = useState(0);
+    const [phoneDamaged, setPhoneDamaged] = useState(0);
 
     const [loading, setLoading] = useState(true);
 
@@ -63,11 +70,15 @@ export default function AdminDashboard({
             const [
                 allChargers,
                 borrowedChargers,
+                allPhones,
+                phoneDamageReports,
                 transactions,
                 pendingDamageReports,
             ] = await Promise.all([
                 getAllChargers(),
                 getBorrowedChargers(),
+                getAllPhones(),
+                getPhoneDamageReports(),
                 getTransactions(),
                 getPendingDamageReports(),
             ]);
@@ -97,6 +108,19 @@ export default function AdminDashboard({
             setBorrowed(borrowedChargers.length);
             setDamaged(
                 new Set(pendingDamageReports.map((report) => report.charger_id)).size
+            );
+            const pendingPhoneIds = new Set(
+                phoneDamageReports
+                    .filter((report) => report.repair_status === 'pending')
+                    .map((report) => report.phone_id)
+            );
+            setPhoneTotal(allPhones.length);
+            setPhoneBorrowed(allPhones.filter((phone) => phone.status === 'borrowed').length);
+            setPhoneDamaged(pendingPhoneIds.size);
+            setPhoneAvailable(
+                allPhones.filter(
+                    (phone) => phone.status === 'available' && !pendingPhoneIds.has(phone.id)
+                ).length
             );
 
             /*
@@ -136,12 +160,13 @@ export default function AdminDashboard({
     }, []);
 
     return (
-        <div className="app-page">
+        <div className="app-page admin-dashboard-page">
+            <ReturnNotifications user={user} />
 
             <header className="app-header">
 
                 <div className="brand">
-                    <div className="brand-mark">M</div>
+                    <img className="brand-mark" src="/melwa-logo.jpg" alt="MELWA" />
 
                     <div>
                         <h1>MELWIRE LANKA (PVT) LTD</h1>
@@ -170,8 +195,9 @@ export default function AdminDashboard({
 
             <main className="dashboard">
 
-                <div className="page-heading">
+                <div className="page-heading admin-dashboard-heading">
 
+                    <span className="dashboard-kicker">Operations center</span>
                     <h2>
                         Admin Dashboard
                     </h2>
@@ -185,7 +211,7 @@ export default function AdminDashboard({
 
                 {loading ? (
 
-                    <div className="loading">
+                    <div className="loading admin-dashboard-loading">
                         Loading dashboard...
                     </div>
 
@@ -197,76 +223,46 @@ export default function AdminDashboard({
                 DASHBOARD COUNTS
             ========================== */}
 
-                        <div className="dashboard-grid admin-stats-grid">
-
-                            <div className="dashboard-card stat-total">
-
-                <span className="card-number">
-                  {total}
-                </span>
-
-                                <span>
-                  Total Chargers
-                </span>
-
+                        <div className="resource-overview">
+                            <div className="resource-summary charger-summary">
+                                <div className="resource-summary-heading">
+                                    <span className="resource-icon">⚡</span>
+                                    <div>
+                                        <span className="resource-eyebrow">Charger inventory</span>
+                                        <strong>Chargers</strong>
+                                    </div>
+                                    <span className="resource-total">{total}</span>
+                                </div>
+                                <div className="resource-metrics">
+                                    <span><b>{available}</b> available</span>
+                                    <span><b>{borrowed}</b> borrowed</span>
+                                    <span><b>{damaged}</b> repair</span>
+                                </div>
                             </div>
-
-
-                            <div className="dashboard-card stat-available">
-
-                <span className="card-number">
-                  {available}
-                </span>
-
-                                <span>
-Currently Available for Use
-                                </span>
-
+                            <div className="resource-summary phone-summary">
+                                <div className="resource-summary-heading">
+                                    <span className="resource-icon">▣</span>
+                                    <div>
+                                        <span className="resource-eyebrow">Company inventory</span>
+                                        <strong>Phones</strong>
+                                    </div>
+                                    <span className="resource-total">{phoneTotal}</span>
+                                </div>
+                                <div className="resource-metrics">
+                                    <span><b>{phoneAvailable}</b> available</span>
+                                    <span><b>{phoneBorrowed}</b> borrowed</span>
+                                    <span><b>{phoneDamaged}</b> repair</span>
+                                </div>
                             </div>
-
-
-                            <div className="dashboard-card stat-borrowed">
-
-                <span className="card-number">
-                  {borrowed}
-                </span>
-
-                                <span>
-                  Borrowed
-                </span>
-
+                            <div className="resource-today">
+                                <span className="today-label">Today</span>
+                                <strong>{returnedToday}</strong>
+                                <span>items returned</span>
                             </div>
-
-
-                            <div className="dashboard-card stat-returned">
-
-                <span className="card-number">
-                  {returnedToday}
-                </span>
-
-                                <span>
-                  Returned Today
-                </span>
-
-                            </div>
-
-                            <div className="dashboard-card stat-damaged">
-                <span className="card-number">
-                  {damaged}
-                </span>
-
-                                <span>
-                  Damaged / Repair
-                </span>
-
-                            </div>
-
                         </div>
 
 
-                        {/* =========================
-                MANAGEMENT MENU
-            ========================== */}
+
 
                         <div className="section-title">
                             Charger Management

@@ -51,7 +51,7 @@ export async function getUserPhoneReturnStatus(username: string) {
   const { data, error } = await supabase.from('phone_transactions')
     .select('id, status, returned_date, returned_time, returned_person, phones(phone_identifier)')
     .eq('returned_by_username', username)
-    .eq('status', 'return_pending')
+    .in('status', ['return_pending', 'returned'])
     .order('id', { ascending: false })
     .limit(1)
     .maybeSingle();

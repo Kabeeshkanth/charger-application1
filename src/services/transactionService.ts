@@ -151,7 +151,7 @@ export async function getUserReturnStatus(username: string) {
   const { data, error } = await supabase.from('charger_transactions')
       .select('id, status, returned_date, returned_time, returned_person, chargers(charger_name)')
       .eq('returned_by_username', username)
-      .eq('status', 'return_pending')
+      .in('status', ['return_pending', 'returned'])
       .order('id', { ascending: false })
       .limit(1)
       .maybeSingle();

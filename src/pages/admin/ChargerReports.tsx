@@ -61,7 +61,7 @@ export default function ChargerReports({ onBack }: ChargerReportsProps) {
             )}
             <header className="app-header">
                 <div className="brand">
-                    <div className="brand-mark">M</div>
+                    <img className="brand-mark" src="/melwa-logo.jpg" alt="MELWA" />
                     <div>
                         <h1>MELWIRE LANKA (PVT) LTD</h1>
                         <p>CHARGER MANAGEMENT SYSTEM</p>
