@@ -14,6 +14,7 @@ interface Transaction {
   returned_date: string | null;
   returned_time: string | null;
   returned_person: string | null;
+  returned_by_username: string | null;
   status: string;
   chargers?: {
     charger_name: string;
@@ -94,6 +95,7 @@ export default function ReturnedChargers({
                     <tr>
                       <th>Charger</th>
                       <th>Borrowed By</th>
+                      <th>Returned By Username</th>
                       <th>Borrowed Date</th>
                       <th>Returned To</th>
                       <th>Returned Date</th>
@@ -113,6 +115,10 @@ export default function ReturnedChargers({
                           </td>
 
                           <td>{transaction.borrowed_person}</td>
+
+                          <td>
+                            {transaction.returned_by_username || '-'}
+                          </td>
 
                           <td>{transaction.borrowed_date}</td>
 

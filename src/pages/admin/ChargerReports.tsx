@@ -11,6 +11,7 @@ interface ChargerReportRow {
     returned_date: string | null;
     returned_time: string | null;
     returned_person: string | null;
+    returned_by_username: string | null;
     status: string;
     chargers?: { charger_name: string };
 }
@@ -111,6 +112,7 @@ export default function ChargerReports({ onBack }: ChargerReportsProps) {
                                     <th>Borrowed Date</th>
                                     <th>Borrowed Time</th>
                                     <th>Borrowed By</th>
+                                    <th>Returned By Username</th>
                                     <th>Returned Date</th>
                                     <th>Returned Time</th>
                                     <th>Returned To</th>
@@ -124,6 +126,7 @@ export default function ChargerReports({ onBack }: ChargerReportsProps) {
                                         <td>{row.borrowed_date}</td>
                                         <td>{row.borrowed_time}</td>
                                         <td>{row.borrowed_person}</td>
+                                        <td>{row.returned_by_username || '—'}</td>
                                         <td>{row.returned_date || '—'}</td>
                                         <td>{row.returned_time || '—'}</td>
                                         <td>{row.returned_person || '—'}</td>
