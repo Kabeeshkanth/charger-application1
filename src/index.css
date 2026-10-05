@@ -1112,14 +1112,12 @@ a {
 }
 
 .resource-icon {
-    display: grid;
     width: 36px;
     height: 36px;
-    place-items: center;
     border-radius: 11px;
     background: var(--primary-light);
     color: var(--primary);
-    font-size: 19px;
+    object-fit: contain;
 }
 
 .phone-summary .resource-icon {
