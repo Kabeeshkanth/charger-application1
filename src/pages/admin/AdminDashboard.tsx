@@ -228,7 +228,7 @@ export default function AdminDashboard({
                                 <div className="resource-summary-heading">
                                     <img className="resource-icon" src="/chargerlogo.jpg" alt="Charger" />
                                     <div>
-                                        <span className="resource-eyebrow">Company IT items inventory</span>
+                                        <span className="resource-eyebrow">Charger inventory</span>
                                         <strong>Chargers</strong>
                                     </div>
                                     <span className="resource-total">{total}</span>
@@ -243,7 +243,7 @@ export default function AdminDashboard({
                                 <div className="resource-summary-heading">
                                     <img className="resource-icon" src="/phonelogo.jpg" alt="Phone" />
                                     <div>
-                                        <span className="resource-eyebrow">Company inventory</span>
+                                        <span className="resource-eyebrow">Phone inventory</span>
                                         <strong>Phones</strong>
                                     </div>
                                     <span className="resource-total">{phoneTotal}</span>
