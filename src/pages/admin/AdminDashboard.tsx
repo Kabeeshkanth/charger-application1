@@ -228,7 +228,7 @@ export default function AdminDashboard({
                                 <div className="resource-summary-heading">
                                     <img className="resource-icon" src="/chargerlogo.jpg" alt="Charger" />
                                     <div>
-                                        <span className="resource-eyebrow">Charger inventory</span>
+                                        <span className="resource-eyebrow">Company IT items inventory</span>
                                         <strong>Chargers</strong>
                                     </div>
                                     <span className="resource-total">{total}</span>
