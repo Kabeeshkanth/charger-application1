@@ -1,4 +1,4 @@
-const CACHE_NAME = 'melwire-charger-shell-v3';
+const CACHE_NAME = 'melwire-charger-shell-v4';
 const APP_SHELL = [
   '/',
   '/index.html',
