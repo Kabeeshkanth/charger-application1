@@ -57,7 +57,7 @@ type Screen =
 const STORED_USER_KEY = 'charger-manager-user';
 
 function getStoredUser(): AppUser | null {
-  const storedUser = localStorage.getItem(STORED_USER_KEY);
+  const storedUser = sessionStorage.getItem(STORED_USER_KEY);
 
   if (!storedUser) {
     return null;
@@ -79,7 +79,7 @@ function getStoredUser(): AppUser | null {
       return parsedUser as AppUser;
     }
   } catch {
-    localStorage.removeItem(STORED_USER_KEY);
+    sessionStorage.removeItem(STORED_USER_KEY);
   }
 
   return null;
@@ -91,11 +91,23 @@ function App() {
 
   useEffect(() => {
     if (user) {
-      localStorage.setItem(STORED_USER_KEY, JSON.stringify(user));
+      sessionStorage.setItem(STORED_USER_KEY, JSON.stringify(user));
     } else {
-      localStorage.removeItem(STORED_USER_KEY);
+      sessionStorage.removeItem(STORED_USER_KEY);
     }
   }, [user]);
+
+  useEffect(() => {
+    const clearSessionOnExit = () => {
+      sessionStorage.removeItem(STORED_USER_KEY);
+    };
+
+    window.addEventListener('pagehide', clearSessionOnExit);
+
+    return () => {
+      window.removeEventListener('pagehide', clearSessionOnExit);
+    };
+  }, []);
 
   const handleLogout = () => {
     setUser(null);
