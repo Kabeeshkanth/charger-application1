@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import Login from './pages/Login';
 import InstallGate from './components/InstallGate';
@@ -88,6 +88,7 @@ function getStoredUser(): AppUser | null {
 function App() {
   const [user, setUser] = useState<AppUser | null>(getStoredUser);
   const [screen, setScreen] = useState<Screen>('dashboard');
+  const isHandlingBackNavigation = useRef(false);
 
   useEffect(() => {
     if (user) {
@@ -102,12 +103,51 @@ function App() {
       sessionStorage.removeItem(STORED_USER_KEY);
     };
 
+    window.addEventListener('beforeunload', clearSessionOnExit);
     window.addEventListener('pagehide', clearSessionOnExit);
 
     return () => {
+      window.removeEventListener('beforeunload', clearSessionOnExit);
       window.removeEventListener('pagehide', clearSessionOnExit);
     };
   }, []);
+
+  useEffect(() => {
+    const currentState = window.history.state as { chargerScreen?: Screen } | null;
+
+    if (currentState?.chargerScreen !== screen) {
+      if (currentState?.chargerScreen) {
+        window.history.pushState({ chargerScreen: screen }, '');
+      } else {
+        window.history.replaceState({ chargerScreen: screen }, '');
+      }
+    }
+
+    const handleBackNavigation = (event: PopStateEvent) => {
+      const nextState = event.state as { chargerScreen?: Screen } | null;
+
+      if (nextState?.chargerScreen) {
+        isHandlingBackNavigation.current = true;
+        setScreen(nextState.chargerScreen);
+      } else {
+        window.history.pushState({ chargerScreen: 'dashboard' }, '');
+        isHandlingBackNavigation.current = true;
+        setScreen('dashboard');
+      }
+    };
+
+    window.addEventListener('popstate', handleBackNavigation);
+
+    return () => {
+      window.removeEventListener('popstate', handleBackNavigation);
+    };
+  }, [screen]);
+
+  useEffect(() => {
+    if (isHandlingBackNavigation.current) {
+      isHandlingBackNavigation.current = false;
+    }
+  }, [screen]);
 
   const handleLogout = () => {
     setUser(null);
