@@ -54,63 +54,10 @@ type Screen =
     | 'damagedResources'
     | 'reportsResources';
 
-const STORED_USER_KEY = 'charger-manager-user';
-
-function getStoredUser(): AppUser | null {
-  const storedUser = sessionStorage.getItem(STORED_USER_KEY);
-
-  if (!storedUser) {
-    return null;
-  }
-
-  try {
-    const parsedUser: unknown = JSON.parse(storedUser);
-
-    if (
-      typeof parsedUser === 'object' &&
-      parsedUser !== null &&
-      'user_id' in parsedUser &&
-      'username' in parsedUser &&
-      'role' in parsedUser &&
-      typeof parsedUser.user_id === 'number' &&
-      typeof parsedUser.username === 'string' &&
-      (parsedUser.role === 'admin' || parsedUser.role === 'user')
-    ) {
-      return parsedUser as AppUser;
-    }
-  } catch {
-    sessionStorage.removeItem(STORED_USER_KEY);
-  }
-
-  return null;
-}
-
 function App() {
-  const [user, setUser] = useState<AppUser | null>(getStoredUser);
+  const [user, setUser] = useState<AppUser | null>(null);
   const [screen, setScreen] = useState<Screen>('dashboard');
   const isHandlingBackNavigation = useRef(false);
-
-  useEffect(() => {
-    if (user) {
-      sessionStorage.setItem(STORED_USER_KEY, JSON.stringify(user));
-    } else {
-      sessionStorage.removeItem(STORED_USER_KEY);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    const clearSessionOnExit = () => {
-      sessionStorage.removeItem(STORED_USER_KEY);
-    };
-
-    window.addEventListener('beforeunload', clearSessionOnExit);
-    window.addEventListener('pagehide', clearSessionOnExit);
-
-    return () => {
-      window.removeEventListener('beforeunload', clearSessionOnExit);
-      window.removeEventListener('pagehide', clearSessionOnExit);
-    };
-  }, []);
 
   useEffect(() => {
     const currentState = window.history.state as { chargerScreen?: Screen } | null;
