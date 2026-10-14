@@ -9,7 +9,8 @@ import {
 import { getAllPhones } from '../../services/phoneService';
 import { getPhoneDamageReports } from '../../services/phoneDamageService';
 
-import { getTransactions } from '../../services/transactionService';
+import { getPendingReturns, getTransactions } from '../../services/transactionService';
+import { getPendingPhoneReturns } from '../../services/phoneTransactionService';
 import { getPendingDamageReports } from '../../services/damageService';
 import type { ChargerTransaction } from '../../types/transaction';
 import ReturnNotifications from '../../components/ReturnNotifications';
@@ -59,6 +60,7 @@ export default function AdminDashboard({
     const [phoneAvailable, setPhoneAvailable] = useState(0);
     const [phoneBorrowed, setPhoneBorrowed] = useState(0);
     const [phoneDamaged, setPhoneDamaged] = useState(0);
+    const [pendingReturns, setPendingReturns] = useState(0);
 
     const [loading, setLoading] = useState(true);
 
@@ -74,6 +76,8 @@ export default function AdminDashboard({
                 phoneDamageReports,
                 transactions,
                 pendingDamageReports,
+                pendingChargerReturns,
+                pendingPhoneReturns,
             ] = await Promise.all([
                 getAllChargers(),
                 getBorrowedChargers(),
@@ -81,6 +85,8 @@ export default function AdminDashboard({
                 getPhoneDamageReports(),
                 getTransactions(),
                 getPendingDamageReports(),
+                getPendingReturns(user.user_id),
+                getPendingPhoneReturns(user.user_id),
             ]);
 
             /*
@@ -137,6 +143,7 @@ export default function AdminDashboard({
             ).length;
 
             setReturnedToday(returnedTodayCount);
+            setPendingReturns(pendingChargerReturns.length + pendingPhoneReturns.length);
 
         } catch (error) {
 
@@ -285,6 +292,9 @@ export default function AdminDashboard({
                             </button>
                             <button className="primary-button return-approval-button" onClick={onReturnApprovals}>
                                 Return Approvals
+                                <span className="pending-return-badge" aria-label={`${pendingReturns} pending return requests`}>
+                                    {pendingReturns}
+                                </span>
                             </button>
                             <button onClick={onAvailableResources}>Available Phones & Chargers</button>
                             <button onClick={onBorrowedResources}>Borrowed Phones & Chargers</button>

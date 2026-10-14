@@ -1295,8 +1295,29 @@ a {
 }
 
 .menu-grid button.return-approval-button {
+    position: relative;
     border: 2px solid var(--primary-dark);
     box-shadow: 0 5px 14px rgba(200, 16, 46, 0.22);
+}
+
+.pending-return-badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    padding: 0 7px;
+    border: 3px solid #ffffff;
+    border-radius: 999px;
+    background: var(--primary-dark);
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 800;
+    line-height: 1;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.22);
 }
 
 /* =========================================================
