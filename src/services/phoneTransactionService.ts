@@ -34,6 +34,16 @@ export async function getPhoneTransactions() {
   return data || [];
 }
 
+export async function getCurrentlyBorrowedPhones() {
+  const { data, error } = await supabase.from('phone_transactions')
+    .select('id, phone_id, borrowed_date, borrowed_time, borrowed_person, department, phones(phone_identifier, phone_number)')
+    .eq('status', 'borrowed')
+    .order('borrowed_date', { ascending: false })
+    .order('borrowed_time', { ascending: false });
+  if (error) throw new Error(error.message);
+  return data || [];
+}
+
 export async function getPendingPhoneReturns(adminId: number) {
   const { data, error } = await supabase.from('phone_transactions')
     .select('*, phones(phone_identifier, phone_number)').eq('status', 'return_pending')

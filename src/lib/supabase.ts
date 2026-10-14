@@ -6,5 +6,12 @@ const SUPABASE_ANON_KEY = 'sb_publishable_8VYLwS7Nxn89nxfC0DoCNw_ZTxhb6hi';
 
 export const supabase = createClient(
     SUPABASE_URL,
-    SUPABASE_ANON_KEY
+    SUPABASE_ANON_KEY,
+    {
+        auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false,
+        },
+    }
 );

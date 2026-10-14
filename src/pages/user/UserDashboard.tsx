@@ -11,6 +11,7 @@ interface UserDashboardProps {
     onReturn: () => void;
     onBorrowPhone: () => void;
     onReturnPhone: () => void;
+    onBorrowedPhones: () => void;
 }
 
 export default function UserDashboard({
@@ -20,6 +21,7 @@ export default function UserDashboard({
                                           onReturn,
                                           onBorrowPhone,
                                           onReturnPhone,
+                                          onBorrowedPhones,
                                       }: UserDashboardProps) {
     const [returnStatus, setReturnStatus] = useState<{ status: string; deviceName: string } | null>(null);
     const [device, setDevice] = useState<'phone' | 'charger' | null>(null);
@@ -134,6 +136,14 @@ export default function UserDashboard({
                         <button className={`user-action-card device-choice-card charger-choice ${device === 'charger' ? 'device-choice-active' : ''}`} onClick={() => setDevice('charger')}>
                             <div className="action-icon">⚡</div><div className="action-content"><strong>Chargers</strong><span>Borrow or return a company charger.</span></div><span className="action-arrow">›</span>
                         </button>
+                        <button className="user-action-card device-choice-card phone-choice" onClick={onBorrowedPhones}>
+                            <div className="action-icon">☷</div>
+                            <div className="action-content">
+                                <strong>Currently Borrowed Phones</strong>
+                                <span>View phones and the usernames of current borrowers.</span>
+                            </div>
+                            <span className="action-arrow">›</span>
+                        </button>
                     </div>
                 </section>
 
@@ -148,6 +158,7 @@ export default function UserDashboard({
                         </p>
                     </div>
                 </section>
+
             </main>
 
             <footer className="app-footer">

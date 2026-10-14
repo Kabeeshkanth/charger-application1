@@ -26,6 +26,7 @@ import BorrowCharger from './pages/user/BorrowCharger';
 import ReturnCharger from './pages/user/ReturnCharger';
 import BorrowPhone from './pages/user/BorrowPhone';
 import ReturnPhone from './pages/user/ReturnPhone';
+import UserBorrowedPhones from './pages/user/BorrowedPhones';
 
 import type { AppUser } from './types/auth';
 
@@ -50,6 +51,7 @@ type Screen =
     | 'phoneReports'
     | 'borrowPhone'
     | 'returnPhone'
+    | 'borrowedPhones'
     | 'availableResources'
     | 'damagedResources'
     | 'reportsResources';
@@ -229,6 +231,7 @@ function App() {
 
   if (screen === 'borrowPhone') return <BorrowPhone user={user} onBack={() => setScreen('dashboard')} />;
   if (screen === 'returnPhone') return <ReturnPhone user={user} onBack={() => setScreen('dashboard')} />;
+  if (screen === 'borrowedPhones') return <UserBorrowedPhones onBack={() => setScreen('dashboard')} />;
 
   return (
       <UserDashboard
@@ -238,6 +241,7 @@ function App() {
           onReturn={() => setScreen('return')}
           onBorrowPhone={() => setScreen('borrowPhone')}
           onReturnPhone={() => setScreen('returnPhone')}
+          onBorrowedPhones={() => setScreen('borrowedPhones')}
       />
   );
 }
