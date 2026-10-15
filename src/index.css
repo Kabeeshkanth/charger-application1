@@ -660,6 +660,32 @@ a {
     background: var(--surface);
 }
 
+.user-edit-form {
+    display: grid;
+    gap: 12px;
+    margin: 18px 0 8px;
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--primary-light);
+}
+
+.user-edit-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.user-edit-heading h4 {
+    margin: 0;
+    color: var(--text-dark);
+}
+
+.user-edit-heading p {
+    margin: 5px 0 0;
+}
+
 .team-member-row {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
@@ -677,6 +703,7 @@ a {
 
 .user-row-actions {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     gap: 8px;
     justify-self: end;

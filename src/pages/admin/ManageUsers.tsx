@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { createAppUser, deleteAppUser, getAppUsers, updateAppUserRole } from '../../services/authService';
+import { createAppUser, deleteAppUser, getAppUsers, updateAppUser, updateAppUserRole } from '../../services/authService';
 import type { AppUser } from '../../types/auth';
 
 interface ManageUsersProps {
@@ -10,6 +10,10 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
   const [users, setUsers] = useState<AppUser[]>([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [editingUser, setEditingUser] = useState<AppUser | null>(null);
+  const [editUsername, setEditUsername] = useState('');
+  const [editPassword, setEditPassword] = useState('');
+  const [savingEdit, setSavingEdit] = useState(false);
   const [loading, setLoading] = useState(true);
   const [section] = useState<'users'>('users');
 
@@ -58,6 +62,34 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
     }
   };
 
+  const startEditing = (appUser: AppUser) => {
+    setEditingUser(appUser);
+    setEditUsername(appUser.username);
+    setEditPassword('');
+  };
+
+  const cancelEditing = () => {
+    setEditingUser(null);
+    setEditUsername('');
+    setEditPassword('');
+  };
+
+  const handleEditSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    if (!editingUser) return;
+
+    setSavingEdit(true);
+    try {
+      await updateAppUser(editingUser.user_id, editUsername, editPassword);
+      cancelEditing();
+      await loadUsers();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : 'Failed to update user.');
+    } finally {
+      setSavingEdit(false);
+    }
+  };
+
   return (
     <div className="app-page">
       <header className="app-header">
@@ -87,10 +119,54 @@ export default function ManageUsers({ onBack }: ManageUsersProps) {
           </form>
           <div className="team-member-list">
             <h3>Created Users</h3>
+            {editingUser ? (
+              <form className="user-edit-form" onSubmit={handleEditSubmit}>
+                <div className="user-edit-heading">
+                  <div>
+                    <h4>Edit User</h4>
+                    <p>Update the username or set a new password for {editingUser.username}.</p>
+                  </div>
+                  <button className="secondary-button" type="button" onClick={cancelEditing} disabled={savingEdit}>
+                    Cancel
+                  </button>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="editManagedUsername">Username</label>
+                  <input
+                    id="editManagedUsername"
+                    value={editUsername}
+                    onChange={(event) => setEditUsername(event.target.value)}
+                    required
+                    disabled={savingEdit}
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="editManagedPassword">New password</label>
+                  <input
+                    id="editManagedPassword"
+                    type="password"
+                    value={editPassword}
+                    onChange={(event) => setEditPassword(event.target.value)}
+                    placeholder="Leave blank to keep the current password"
+                    disabled={savingEdit}
+                  />
+                </div>
+                <button className="primary-button full-width" type="submit" disabled={savingEdit}>
+                  {savingEdit ? 'Saving...' : 'Save Changes'}
+                </button>
+              </form>
+            ) : null}
             {loading ? <p>Loading users...</p> : users.map((appUser) => (
               <div className="team-member-row" key={appUser.user_id}>
                 <span><strong>{appUser.username}</strong></span>
                 <div className="user-row-actions">
+                  <button
+                    className="secondary-button"
+                    type="button"
+                    onClick={() => startEditing(appUser)}
+                  >
+                    Edit
+                  </button>
                   <select
                     value={appUser.role}
                     aria-label={`Role for ${appUser.username}`}
